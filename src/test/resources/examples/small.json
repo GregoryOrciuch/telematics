@@ -1,0 +1,13 @@
+{
+  "autopid_data": {
+    "01-MonitorStatus": 0,
+    "0C-EngineRPM": 807.5,
+    "2F-FuelTankLevel": 70.2,
+    "42-ControlModuleVolt": 14.33,
+    "5C-EngineOilTemp": 88,
+    "67-EngineCoolantTemp1": 90,
+    "46-AmbientAirTemp": 5,
+    "3C-CatTempBank1Sens1": 464.7
+  }
+}
+
