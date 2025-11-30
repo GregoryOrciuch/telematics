@@ -22,4 +22,4 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Build with Gradle
-        run: ./gradlew buildJar
+        run: ./gradlew build
