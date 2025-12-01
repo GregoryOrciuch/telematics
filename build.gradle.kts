@@ -23,6 +23,7 @@ dependencies {
     implementation("com.influxdb:influxdb-client-java:7.4.0")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.mockito:mockito-core:5.20.0")
 }
 
 tasks.withType<Test> {
