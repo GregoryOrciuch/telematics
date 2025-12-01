@@ -64,7 +64,7 @@ public class AutopidInfluxService {
 
         // optional: add device_id as tag if present and remember it.
         String deviceId = null;
-        if (payload.getStatus() != null) {
+        if (! payload.getStatus().isEmpty()) {
             deviceId = payload.getStatus().get("device_id");
             cache.put("DEVICE_ID_STRING", deviceId);
         }
