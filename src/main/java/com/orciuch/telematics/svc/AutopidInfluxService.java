@@ -14,6 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class AutopidInfluxService {
 
+    private final static String DEVICE_ID_STRING = "DEVICE_ID_STRING";
+    private final static String LAST_PAYLOAD = "LAST_PAYLOAD";
+
     private final WriteApi writeApi;
     private final String bucket;
     private final String org;
@@ -66,11 +69,11 @@ public class AutopidInfluxService {
         String deviceId = null;
         if (! payload.getStatus().isEmpty()) {
             deviceId = payload.getStatus().get("device_id");
-            cache.put("DEVICE_ID_STRING", deviceId);
+            cache.put(DEVICE_ID_STRING, deviceId);
         }
         else {
             //try to get it from cache
-            Object obj = cache.get("DEVICE_ID_STRING");
+            Object obj = cache.get(DEVICE_ID_STRING);
             if (obj != null) {
                 deviceId = obj.toString();
             }
@@ -80,8 +83,21 @@ public class AutopidInfluxService {
             point.addTag("device_id", deviceId);
         }
 
+        //save last processed wican payload
+        cache.put(LAST_PAYLOAD, payload);
+
         // non blocking api
         writeApi.writePoint(bucket, org, point);
+    }
+
+    public WicanPayload getLastPayload() {
+        Object o = cache.get(LAST_PAYLOAD);
+        if( o != null) {
+            return (WicanPayload) cache.get(LAST_PAYLOAD);
+        }
+        else {
+            return new WicanPayload();
+        }
     }
 
     private static String sanitizeFieldName(String raw) {
