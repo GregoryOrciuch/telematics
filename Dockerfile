@@ -1,5 +1,4 @@
-# Step 1: Use an official OpenJDK base image from Docker Hub
-FROM amazoncorretto:25-alpine
+FROM cgr.dev/chainguard/jdk:latest
 
 # Step 2: Set the working directory inside the container
 WORKDIR /app
