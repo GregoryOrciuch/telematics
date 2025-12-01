@@ -1,6 +1,6 @@
 package com.orciuch.telematics.svc;
 
-import com.influxdb.client.WriteApiBlocking;
+import com.influxdb.client.WriteApi;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.orciuch.telematics.model.WicanPayload;
@@ -13,16 +13,20 @@ import java.util.Map;
 @Service
 public class AutopidInfluxService {
 
-    private final WriteApiBlocking writeApi;
+    private final WriteApi writeApi;
     private final String bucket;
     private final String org;
 
-    public AutopidInfluxService(WriteApiBlocking writeApi,
+    private final DeviceShortMem deviceShortMem;
+
+    public AutopidInfluxService(WriteApi writeApi,
                                 @org.springframework.beans.factory.annotation.Value("${influx.bucket}") String bucket,
-                                @org.springframework.beans.factory.annotation.Value("${influx.org}") String org) {
+                                @org.springframework.beans.factory.annotation.Value("${influx.org}") String org,
+                                DeviceShortMem deviceShortMem) {
         this.writeApi = writeApi;
         this.bucket = bucket;
         this.org = org;
+        this.deviceShortMem = deviceShortMem;
     }
 
     /**
@@ -59,16 +63,25 @@ public class AutopidInfluxService {
                 .addFields(fields)
                 .time(Instant.now(), WritePrecision.MS);
 
-        // optional: add device_id as tag if present
+        // optional: add device_id as tag if present and remember it.
         String deviceId = null;
         if (payload.getStatus() != null) {
             deviceId = payload.getStatus().get("device_id");
+            deviceShortMem.put("DEVICE_ID_STRING", deviceId);
         }
+        else {
+            //try to get it from cache
+            Object obj = deviceShortMem.get("DEVICE_ID_STRING");
+            if (obj != null) {
+                deviceId = obj.toString();
+            }
+        }
+
         if (deviceId != null && !deviceId.isEmpty()) {
             point.addTag("device_id", deviceId);
         }
 
-        // Write the point (blocking). For high throughput use writeApi.writePoints(...) or non-blocking API.
+        // non blocking api
         writeApi.writePoint(bucket, org, point);
     }
 

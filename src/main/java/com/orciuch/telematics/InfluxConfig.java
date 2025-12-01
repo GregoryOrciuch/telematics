@@ -2,7 +2,7 @@ package com.orciuch.telematics;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
-import com.influxdb.client.WriteApiBlocking;
+import com.influxdb.client.WriteApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +29,7 @@ public class InfluxConfig {
     }
 
     @Bean
-    public WriteApiBlocking writeApiBlocking(InfluxDBClient client) {
-        return client.getWriteApiBlocking();
+    public WriteApi writeApiBlocking(InfluxDBClient client) {
+        return client.makeWriteApi();
     }
 }
