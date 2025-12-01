@@ -3,6 +3,7 @@ package com.orciuch.telematics.svc;
 import com.influxdb.client.WriteApi;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
+import com.orciuch.telematics.model.LastData;
 import com.orciuch.telematics.model.WicanPayload;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ public class AutopidInfluxService {
 
     private final static String DEVICE_ID_STRING = "DEVICE_ID_STRING";
     private final static String LAST_PAYLOAD = "LAST_PAYLOAD";
+    private final static String LAST_TIMESTAMP = "LAST_TIMESTAMP";
 
     private final WriteApi writeApi;
     private final String bucket;
@@ -85,18 +87,22 @@ public class AutopidInfluxService {
 
         //save last processed wican payload
         cache.put(LAST_PAYLOAD, payload);
+        cache.put(LAST_TIMESTAMP, Instant.now());
 
         // non blocking api
         writeApi.writePoint(bucket, org, point);
     }
 
-    public WicanPayload getLastPayload() {
+    public LastData getLastPayload() {
         Object o = cache.get(LAST_PAYLOAD);
         if( o != null) {
-            return (WicanPayload) cache.get(LAST_PAYLOAD);
+            LastData lastData = new LastData();
+            lastData.setWicanPayload((WicanPayload) cache.get(LAST_PAYLOAD));
+            lastData.setLastTimestamp((Instant) cache.get(LAST_TIMESTAMP));
+            return lastData;
         }
         else {
-            return new WicanPayload();
+            return new LastData();
         }
     }
 

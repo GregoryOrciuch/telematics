@@ -1,6 +1,7 @@
 package com.orciuch.telematics.ctrl;
 
 
+import com.orciuch.telematics.model.LastData;
 import com.orciuch.telematics.model.WicanPayload;
 import com.orciuch.telematics.svc.AutopidInfluxService;
 import org.slf4j.Logger;
@@ -23,9 +24,9 @@ public class Ingest {
     Logger logger = LoggerFactory.getLogger(Ingest.class);
 
     @GetMapping
-    public ResponseEntity<String> showOK() {
+    public ResponseEntity<LastData> showOK() {
         logger.info("Dummy response");
-        return new ResponseEntity<>("OK", HttpStatus.OK);
+        return new ResponseEntity<>(influxService.getLastPayload(), HttpStatus.OK);
     }
 
     @PostMapping(consumes = "application/json")
