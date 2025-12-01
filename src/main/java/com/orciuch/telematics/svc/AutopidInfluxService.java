@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class AutopidInfluxService {
@@ -17,16 +18,14 @@ public class AutopidInfluxService {
     private final String bucket;
     private final String org;
 
-    private final DeviceShortMem deviceShortMem;
+    private final Map<String, Object> cache = new ConcurrentHashMap<>();
 
     public AutopidInfluxService(WriteApi writeApi,
                                 @org.springframework.beans.factory.annotation.Value("${influx.bucket}") String bucket,
-                                @org.springframework.beans.factory.annotation.Value("${influx.org}") String org,
-                                DeviceShortMem deviceShortMem) {
+                                @org.springframework.beans.factory.annotation.Value("${influx.org}") String org) {
         this.writeApi = writeApi;
         this.bucket = bucket;
         this.org = org;
-        this.deviceShortMem = deviceShortMem;
     }
 
     /**
@@ -67,11 +66,11 @@ public class AutopidInfluxService {
         String deviceId = null;
         if (payload.getStatus() != null) {
             deviceId = payload.getStatus().get("device_id");
-            deviceShortMem.put("DEVICE_ID_STRING", deviceId);
+            cache.put("DEVICE_ID_STRING", deviceId);
         }
         else {
             //try to get it from cache
-            Object obj = deviceShortMem.get("DEVICE_ID_STRING");
+            Object obj = cache.get("DEVICE_ID_STRING");
             if (obj != null) {
                 deviceId = obj.toString();
             }
