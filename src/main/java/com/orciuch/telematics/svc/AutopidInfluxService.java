@@ -78,11 +78,18 @@ public class AutopidInfluxService {
     }
 
     private static Number tryParseNumberFromString(Object v) {
-        if (!(v instanceof String)) return null;
-        String s = ((String) v).trim();
-        try {
-            return Float.parseFloat(s);
-        } catch (NumberFormatException ignored) {
+
+        if (v instanceof Number number) {
+            //cast all to float
+            try {
+                return number.floatValue();
+            } catch (NumberFormatException ignored) {
+                return null;
+            }
+
+        }
+        else {
+            //is not number
             return null;
         }
     }
