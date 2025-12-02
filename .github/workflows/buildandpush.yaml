@@ -15,7 +15,7 @@ jobs:
 
     env:
       REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository }}
+      IMAGE_NAME: gregoryorciuch/telematics
       IMAGE_TAG: latest
 
     steps:
