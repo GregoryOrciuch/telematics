@@ -25,7 +25,7 @@ public class Ingest {
 
     @GetMapping
     public ResponseEntity<LastData> showOK() {
-        logger.info("Dummy response");
+        logger.info("Showing lastData.");
         return new ResponseEntity<>(influxService.getLastPayload(), HttpStatus.OK);
     }
 
@@ -35,7 +35,10 @@ public class Ingest {
         // payload.getAutopid_data().get("0C-EngineRPM");
         // payload.getConfig().get("0C-EngineRPM").getClazz();
         influxService.writeAutopidToInflux(payload);
-        logger.info("Ingesting:"+payload);
+        if(payload.getStatus() != null && !payload.getStatus().isEmpty()){
+            logger.info("Received Full frame: "+payload);
+        }
+        logger.debug("Ingesting:"+payload);
         return ResponseEntity.ok().build();
     }
 }
