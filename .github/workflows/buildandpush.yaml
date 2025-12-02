@@ -43,4 +43,4 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Build with Gradle
-        run: ./gradlew bootBuildImage --imageName ghcr.io/gregoryorciuch/telematics:latest --publishImage true
+        run: ./gradlew bootBuildImage --imageName="ghcr.io/gregoryorciuch/telematics:latest" --publishImage
