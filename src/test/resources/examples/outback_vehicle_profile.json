@@ -10,13 +10,6 @@
       }
     },
     {
-      "pid": "22113D",
-      "pid_init": "ATSH7A3;",
-      "parameters": {
-        "TARGET_GEAR_RATIO": "([B0:B1] * 256) / 65535"
-      }
-    },
-    {
       "pid": "221022",
       "pid_init": "ATSH753;",
       "parameters": {
@@ -24,6 +17,20 @@
         "TP_FR_KPA": "(B5 / 5) * 6.894757",
         "TP_RL_KPA": "(B6 / 5) * 6.894757",
         "TP_RR_KPA": "(B7 / 5) * 6.894757"
+      }
+    },
+    {
+      "pid": "2212ED",
+      "pid_init": "ATSH7A2;",
+      "parameters": {
+        "MAF_AVERAGE_GPS": "([B0:B1] / 100)"
+      }
+    },
+    {
+      "pid": "221322",
+      "pid_init": "ATSH7A2;",
+      "parameters": {
+        "BAT_CHG_DISCHG_CURRENT_A": "(([B0:B3] * 10) / 10000) - 2000"
       }
     }
   ]
