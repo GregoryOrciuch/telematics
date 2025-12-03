@@ -23,14 +23,14 @@
       "pid": "2212ED",
       "pid_init": "ATSH7A2;",
       "parameters": {
-        "MAF_AVERAGE_GPS": "([B0:B1] / 100)"
+        "MAF_AVERAGE_GPS": "([B4:B5] / 100)"
       }
     },
     {
       "pid": "221322",
       "pid_init": "ATSH7A2;",
       "parameters": {
-        "BAT_CHG_DISCHG_CURRENT_A": "(([B0:B3] * 10) / 10000) - 2000"
+        "BAT_CHG_DISCHG_CURRENT_A": "(([B4:B7] * 10) / 10000) - 2000"
       }
     }
   ]
