@@ -1,0 +1,72 @@
+{
+  "position": {
+    "id": 0,
+    "attributes": {
+      "sat": 6,
+      "rssi": 50,
+      "batteryLevel": 100,
+      "steps": 0,
+      "distance": 5.735273981258427,
+      "totalDistance": 311.8285198040239,
+      "motion": true
+    },
+    "deviceId": 1,
+    "protocol": "watch",
+    "serverTime": "2025-12-03T14:20:54.529+00:00",
+    "deviceTime": "2025-12-03T14:20:52.000+00:00",
+    "fixTime": "2025-12-03T14:20:52.000+00:00",
+    "valid": true,
+    "latitude": 50.070318,
+    "longitude": 17.434925,
+    "altitude": 1.0,
+    "speed": 0.059989222700000004,
+    "course": 0.0,
+    "address": null,
+    "accuracy": 0.0,
+    "network": {
+      "radioType": "gsm",
+      "considerIp": false,
+      "cellTowers": [
+        {
+          "cellId": 666,
+          "locationAreaCode": 5000,
+          "mobileCountryCode": 260,
+          "mobileNetworkCode": 1,
+          "signalStrength": -139
+        },
+        {
+          "cellId": 777,
+          "locationAreaCode": 5000,
+          "mobileCountryCode": 260,
+          "mobileNetworkCode": 1,
+          "signalStrength": -135
+        },
+        {
+          "cellId": 888,
+          "locationAreaCode": 5000,
+          "mobileCountryCode": 260,
+          "mobileNetworkCode": 1,
+          "signalStrength": -133
+        }
+      ]
+    },
+    "geofenceIds": null
+  },
+  "device": {
+    "id": 1,
+    "attributes":{"autopid_device_id":"48ca433227a1"},
+    "groupId": 0,
+    "calendarId": 0,
+    "name": "Subaru",
+    "uniqueId": "9056666632",
+    "status": "online",
+    "lastUpdate": "2025-12-03T14:20:54.530+00:00",
+    "positionId": 34,
+    "phone": null,
+    "model": null,
+    "contact": null,
+    "category": null,
+    "disabled": false,
+    "expirationTime": null
+  }
+}
