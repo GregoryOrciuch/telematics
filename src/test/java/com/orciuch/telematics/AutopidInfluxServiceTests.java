@@ -2,6 +2,7 @@ package com.orciuch.telematics;
 
 import com.influxdb.client.WriteApi;
 import com.influxdb.client.write.Point;
+import com.orciuch.telematics.model.TrackerEnvelope;
 import com.orciuch.telematics.model.WicanPayload;
 import com.orciuch.telematics.svc.AutopidInfluxService;
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,20 @@ public class AutopidInfluxServiceTests {
         assertTrue(point.hasFields());
     }
 
+    @Test
+    public void writeTraccarToInfluxTest() throws Exception{
+        String traccarPayload = loadJsonFromClasspath("examples/traccar_payload.json");
+        TrackerEnvelope trackerEnvelope = objectMapper.readValue(traccarPayload, TrackerEnvelope.class);
+
+        autopidInfluxService.writeTraccarEnvToInflux(trackerEnvelope,trackerEnvelope.getDevice().getAttributes().get("autopid_device_id").toString());
+
+        verify(writeApi, times(1)).writePoint(any(),any(),pointCaptor.capture());
+
+        Point point = pointCaptor.getValue();
+
+        assertNotNull(point);
+        assertTrue(point.hasFields());
+    }
 
     private String loadJsonFromClasspath(String path) throws Exception {
         ClassPathResource resource = new ClassPathResource(path);

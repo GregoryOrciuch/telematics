@@ -1,6 +1,7 @@
 package com.orciuch.telematics.ctrl;
 
 import com.orciuch.telematics.model.TrackerEnvelope;
+import com.orciuch.telematics.svc.AutopidInfluxService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,11 @@ import java.util.Optional;
 @RequestMapping("/traccar")
 public class TraccarCatcher {
 
-    // creating a logger
-    Logger logger = LoggerFactory.getLogger(TraccarCatcher.class);
+    private final AutopidInfluxService influxService;
+
+    public TraccarCatcher(AutopidInfluxService influxService) {
+        this.influxService = influxService;
+    }
 
     @PostMapping(consumes = "application/json")
     public ResponseEntity<Void> eatFromTraccar(@RequestBody TrackerEnvelope payload,
@@ -25,7 +29,7 @@ public class TraccarCatcher {
                     .map(TrackerEnvelope.Device::getAttributes)
                     .map(a -> a.get("autopid_device_id"))
                     .map(String.class::cast)
-                    .ifPresent(id -> logger.info("Detected device id: {}", id));
+                    .ifPresent(id -> influxService.writeTraccarEnvToInflux(payload, id));
         }
 
         return ResponseEntity.ok().build();

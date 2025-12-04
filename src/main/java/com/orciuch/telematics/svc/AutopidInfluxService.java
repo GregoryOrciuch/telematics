@@ -4,6 +4,7 @@ import com.influxdb.client.WriteApi;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.orciuch.telematics.model.LastData;
+import com.orciuch.telematics.model.TrackerEnvelope;
 import com.orciuch.telematics.model.WicanPayload;
 import org.springframework.stereotype.Service;
 
@@ -104,6 +105,25 @@ public class AutopidInfluxService {
         else {
             return new LastData();
         }
+    }
+
+    public void writeTraccarEnvToInflux(TrackerEnvelope trackerEnvelope, String deviceId) {
+
+        Map<String, Object> fields = new HashMap<>();
+        fields.put("GPS_LAT",trackerEnvelope.getPosition().getLatitude().floatValue());
+        fields.put("GPS_LNG",trackerEnvelope.getPosition().getLongitude().floatValue());
+        fields.put("GPS_ALTITUDE",trackerEnvelope.getPosition().getAltitude().floatValue());
+        fields.put("GPS_SPEED",trackerEnvelope.getPosition().getSpeed().floatValue());
+
+        Point point = Point
+                .measurement("autopid")
+                .addFields(fields)
+                .time(Instant.now(), WritePrecision.MS);
+
+        point.addTag("device_id", deviceId);
+
+        // non blocking api
+        writeApi.writePoint(bucket, org, point);
     }
 
     private static String sanitizeFieldName(String raw) {
