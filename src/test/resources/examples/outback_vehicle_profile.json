@@ -32,13 +32,6 @@
       "parameters": {
         "BAT_CHG_DISCHG_CURRENT_A": "(([B4:B7] * 10) / 10000) - 2000"
       }
-    },
-    {
-      "pid": "22111F",
-      "pid_init": "ATSH7A2;",
-      "parameters": {
-        "IAT_AFTER_FILTER_C": "B4 - 40"
-      }
     }
   ]
 }
