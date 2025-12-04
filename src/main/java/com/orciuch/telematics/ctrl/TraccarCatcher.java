@@ -20,7 +20,6 @@ public class TraccarCatcher {
                                                @RequestHeader("x-api-key") String xApiKey) {
 
         if(xApiKey != null && !xApiKey.isEmpty() ){
-            logger.info("Received from Traccar: "+payload);
 
             Optional.ofNullable(payload.getDevice())
                     .map(TrackerEnvelope.Device::getAttributes)
