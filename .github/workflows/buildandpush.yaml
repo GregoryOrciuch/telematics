@@ -38,6 +38,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
+      - name: Pull previous image for buildpack cache
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} || true
+
       - name: Build with Gradle
         run: |
           ./gradlew --no-daemon bootBuildImage \
