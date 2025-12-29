@@ -42,8 +42,12 @@ jobs:
         run: |
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} || true
 
+      - name: Run Tests
+        run: |
+          ./gradlew clean test --info
+
       - name: Build with Gradle
         run: |
-          ./gradlew --no-daemon bootBuildImage \
+          ./gradlew bootBuildImage \
             --imageName="${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}" \
             --publishImage
