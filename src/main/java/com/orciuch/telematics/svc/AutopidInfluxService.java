@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -70,8 +71,9 @@ public class AutopidInfluxService {
 
         // optional: add device_id as tag if present and remember it.
         String deviceId = null;
-        if (! payload.getStatus().isEmpty()) {
-            deviceId = payload.getStatus().get("device_id");
+        Map<String, String> status = payload.getStatus();
+        if (status != null && !status.isEmpty()) {
+            deviceId = status.get("device_id");
             cache.put(DEVICE_ID_STRING, deviceId);
         }
         else {
@@ -108,12 +110,21 @@ public class AutopidInfluxService {
     }
 
     public void writeTraccarEnvToInflux(TrackerEnvelope trackerEnvelope, String deviceId) {
+        if (trackerEnvelope == null || trackerEnvelope.getPosition() == null || deviceId == null || deviceId.isBlank()) {
+            return;
+        }
+
+        TrackerEnvelope.Position position = trackerEnvelope.getPosition();
+        if (StreamFields.latitudeMissing(position) || StreamFields.longitudeMissing(position)
+                || StreamFields.altitudeMissing(position) || StreamFields.speedMissing(position)) {
+            return;
+        }
 
         Map<String, Object> fields = new HashMap<>();
-        fields.put("GPS_LAT",trackerEnvelope.getPosition().getLatitude().floatValue());
-        fields.put("GPS_LNG",trackerEnvelope.getPosition().getLongitude().floatValue());
-        fields.put("GPS_ALTITUDE",trackerEnvelope.getPosition().getAltitude().floatValue());
-        fields.put("GPS_SPEED",trackerEnvelope.getPosition().getSpeed().floatValue());
+        fields.put("GPS_LAT", position.getLatitude().floatValue());
+        fields.put("GPS_LNG", position.getLongitude().floatValue());
+        fields.put("GPS_ALTITUDE", position.getAltitude().floatValue());
+        fields.put("GPS_SPEED", position.getSpeed().floatValue());
 
         Point point = Point
                 .measurement("autopid")
@@ -145,6 +156,24 @@ public class AutopidInfluxService {
         else {
             //is not number
             return null;
+        }
+    }
+
+    private static final class StreamFields {
+        private static boolean latitudeMissing(TrackerEnvelope.Position position) {
+            return Objects.isNull(position.getLatitude());
+        }
+
+        private static boolean longitudeMissing(TrackerEnvelope.Position position) {
+            return Objects.isNull(position.getLongitude());
+        }
+
+        private static boolean altitudeMissing(TrackerEnvelope.Position position) {
+            return Objects.isNull(position.getAltitude());
+        }
+
+        private static boolean speedMissing(TrackerEnvelope.Position position) {
+            return Objects.isNull(position.getSpeed());
         }
     }
 }

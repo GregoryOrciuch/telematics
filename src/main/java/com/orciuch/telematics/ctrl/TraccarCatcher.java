@@ -2,8 +2,6 @@ package com.orciuch.telematics.ctrl;
 
 import com.orciuch.telematics.model.TrackerEnvelope;
 import com.orciuch.telematics.svc.AutopidInfluxService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,12 +21,12 @@ public class TraccarCatcher {
     public ResponseEntity<Void> eatFromTraccar(@RequestBody TrackerEnvelope payload,
                                                @RequestHeader("x-api-key") String xApiKey) {
 
-        if(xApiKey != null && !xApiKey.isEmpty() ){
+        if (xApiKey != null && !xApiKey.isEmpty()) {
 
             Optional.ofNullable(payload.getDevice())
                     .map(TrackerEnvelope.Device::getAttributes)
                     .map(a -> a.get("autopid_device_id"))
-                    .map(String.class::cast)
+                    .map(String::valueOf)
                     .ifPresent(id -> influxService.writeTraccarEnvToInflux(payload, id));
         }
 

@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import tools.jackson.databind.ObjectMapper;
 
@@ -17,10 +16,10 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class AutopidInfluxServiceTests {
 
@@ -34,6 +33,23 @@ public class AutopidInfluxServiceTests {
 
     @Captor
     ArgumentCaptor<Point> pointCaptor;
+
+    @Test
+    public void writeAutopidToInfluxNullStatusTest() throws Exception {
+
+        String fullJson = loadJsonFromClasspath("examples/full.json");
+        WicanPayload payload = objectMapper.readValue(fullJson, WicanPayload.class);
+        payload.setStatus(null);
+
+        autopidInfluxService.writeAutopidToInflux(payload);
+
+        verify(writeApi, times(1)).writePoint(any(), any(), pointCaptor.capture());
+
+        Point point = pointCaptor.getValue();
+
+        assertNotNull(point);
+        assertTrue(point.hasFields());
+    }
 
     @Test
     public void writeAutopidToInfluxFullTest() throws Exception{
@@ -80,6 +96,15 @@ public class AutopidInfluxServiceTests {
 
         assertNotNull(point);
         assertTrue(point.hasFields());
+    }
+
+    @Test
+    public void writeTraccarToInfluxSkipsMissingPositionTest() {
+        TrackerEnvelope trackerEnvelope = new TrackerEnvelope();
+
+        autopidInfluxService.writeTraccarEnvToInflux(trackerEnvelope, "device-1");
+
+        verify(writeApi, never()).writePoint(any(), any(), any(Point.class));
     }
 
     private String loadJsonFromClasspath(String path) throws Exception {

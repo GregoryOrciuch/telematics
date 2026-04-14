@@ -6,13 +6,16 @@ import com.orciuch.telematics.model.WicanPayload;
 import com.orciuch.telematics.svc.AutopidInfluxService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/ingest")
 public class Ingest {
+
+    private static final Logger logger = LoggerFactory.getLogger(Ingest.class);
 
     private final AutopidInfluxService influxService;
 
@@ -20,13 +23,10 @@ public class Ingest {
         this.influxService = influxService;
     }
 
-    // creating a logger
-    Logger logger = LoggerFactory.getLogger(Ingest.class);
-
     @GetMapping
     public ResponseEntity<LastData> showOK() {
         logger.info("Showing lastData.");
-        return new ResponseEntity<>(influxService.getLastPayload(), HttpStatus.OK);
+        return ResponseEntity.ok(influxService.getLastPayload());
     }
 
     @PostMapping(consumes = "application/json")
@@ -38,11 +38,11 @@ public class Ingest {
         // payload.getAutopid_data().get("0C-EngineRPM");
         // payload.getConfig().get("0C-EngineRPM").getClazz();
         influxService.writeAutopidToInflux(payload);
-        if(payload.getStatus() != null && !payload.getStatus().isEmpty()){
-            logger.info("Received x-api-key: " + xApiKey);
-            logger.info("Received Full frame: "+payload);
+        Map<String, String> status = payload.getStatus();
+        if (status != null && !status.isEmpty()) {
+            logger.info("Received ingest payload for device {}", status.get("device_id"));
         }
-        logger.debug("Ingesting:"+payload);
+        logger.debug("Ingesting payload: {}", payload);
         return ResponseEntity.ok().build();
     }
 }
