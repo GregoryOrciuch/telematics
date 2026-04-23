@@ -21,7 +21,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
-    implementation("com.influxdb:influxdb-client-java:7.5.0")
+    implementation("com.influxdb:influxdb-client-java:8.0.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
